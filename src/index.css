@@ -1,0 +1,343 @@
+/* Reset basico*/
+* {box-sizing: border-box; margin: 0; padding: 0;}
+
+/* 1 - Header */
+header{
+    background-color: #1B2A3B;
+    padding: 20px 0;
+    border-bottom: 1px solid #1E3A5F;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+ 
+/* 2 - Body */
+body {
+background-color: #0D1B2A;
+color: white;
+font-family: 'Inter', Arial, sans-serif;
+font-size: 16px;
+line-height: 1.6;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+
+/* 3 - Container */
+.container {
+    display: flex;
+    gap: 16px;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.header.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.logo h1 {
+    color: #F5A623;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.logo p {
+    color: #94A3B8;
+    font-size: 0.85rem;
+}
+
+/* 4 - Contadores */
+#contadores {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #94A3B8;
+    flex-wrap: wrap;
+}
+
+#cont-total     { color: #94A3B8; }
+#cont-pendentes { color: #F5A623; font-weight: 600;}
+#cont-concluidas { color: #10B981; font-weight: 600;}
+
+.separador {
+    color: #334155;
+    user-select: none;
+}
+
+/* 5 - main */
+.main {
+    flex: 1;
+    padding: 28px 0;
+}
+
+/* 6 - Formulario*/
+.formulario {
+    margin-bottom: 20px;
+}
+
+.campo-linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.input-tarefa {
+    flex: 1;
+    min-width: 180%;
+    padding: 10px 14px;
+    background-color: #1B2A3B;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#input-tarefa::placeholder {
+    color: #4A6480;
+}
+
+#input-tarefa:focus {
+    border-color: #38BDF8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+#sel-prioridade {
+    padding: 10px 12px;
+    background-color: #1B2A3B;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#sel-prioridade:focus {
+    border-color: #38BDF8;
+}
+
+#btn-adicionar {
+    padding: 10px 22px;
+    background-color: #F5A623;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.25);
+    white-space: nowrap;
+}
+
+#btn-adicionar:hover {
+    background-color: #F59E0B;
+    box-shadow: 0 4px 14px rgba(245, 166, 35, 0.4);
+}
+
+#btn-adicionar:active {
+    background-color: #b8800d;
+    transform: scale(0.97);
+    box-shadow: none;
+}
+
+#btn-adicionar:focus {
+    outline: 2px solid #38BDF8;
+    outline-offset: 2px;
+}
+/* 7 - kanban*/
+.Kanban-quadro{
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 24px;
+    padding-bottom: 32px;
+    overflow-x: auto;
+}
+
+.Kanban-coluna {
+    flex: 1;
+    min-width: 200px;
+    background-color: #1B2A3B;
+    border: 1px solid #1E3A5F;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.Kanban-coluna-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: #334155;
+}
+/* 8 - Filtros */
+#controles{
+    margin-bottom: 20px;
+}
+
+#filtros {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-filtro {
+    padding: 6px 16px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-filtro:hover {
+    border-color: #F5A623;
+    color: #F5A623;
+}
+
+.btn-filtro.ativo {
+    background-color: #F5A623;
+    color: #0D1B2A;
+    border-color: #F5A623;
+    font-weight: 700;
+}
+
+/* 9 - Lista de Tarefas */
+#lista-tarefas {
+    flex: 0;
+    list-style-type: style;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tarefa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background-color: #1B2a3B;
+    border-radius: 6px;
+    border: 1px solid #1E3A5F;
+    padding: 12px 16px;
+    border-left: 4px solid #94A3B8;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tarefa:hover {
+    background-color: #1E3A5F;
+}
+
+.tarefa-alta {
+    border-left-color: #EF4444;
+}
+.tarefa-media {
+    border-left-color: #F5A623;
+}
+.tarefa-baixa {
+    border-left-color: #10B981;
+}
+
+.tarefa.concluida{
+    opacity: 0.5;
+}
+
+.texto-tarefa .tarefa-concluida {
+    text-decoration: line-through;
+    color: #94A3B8;
+}
+
+/* 10 - Texto da Tarefa*/
+.texto-tarefa {
+    flex: 1;
+    font-size: 1rem;
+    cursor: pointer;
+    word-break: break-word;
+}
+
+/* 11 - Badge de prioridade */
+.badge-prioridade {
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.badge-prioridade.alta {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+.badge-prioridade.media {
+    background-color: rgba(245, 166, 35, 0.1);
+    color: #F5A623;
+}
+.badge-prioridade.baixa {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #22C55E;
+}
+
+/* 12 - Botão de Deletar */
+.btn-deletar {
+background: none;
+border: none;
+color: #4A6480;
+font-size: 1rem;
+cursor: pointer;
+padding: 2px 6px;
+border-radius: 4px;
+line-height: 1;
+flex-shrink: 0;
+transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-deletar:hover {
+color: #EF4444;
+background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* 13 - Mensagem vazia */
+.mensagem-vazia {
+    text-align: center;
+    color: #94A3B8;
+    font-size: 0.95rem;
+    padding: 40px 0; 
+    font-style: italic;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 14 - Footer */
+.footer {
+    padding: 20px 16px;
+    border-top: 1px solid #1E3A5F;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #4a6480;
+    margin-top: auto;
+}

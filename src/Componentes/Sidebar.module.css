@@ -1,0 +1,36 @@
+.sidebar {
+width: 220px; /* largura fixa da sidebar */
+min-height: 100vh; /* ocupa toda a altura da tela */
+background-color: #0D1B2A;
+padding: 24px 16px;
+position: fixed; /* fica fixa enquanto o conteúdo rola */
+top: 0; left: 0;
+display: flex;
+flex-direction: column;
+gap: 32px;
+}
+
+.logo h1 { color: #F5A623; font-size: 1.4rem; }
+
+.nav {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.link:hover { background-color: #1B2A3b;}
+
+.ativo {
+    background-color: #1e3a5f;
+    color: #38bdf8;
+    font-size: 700;
+}
