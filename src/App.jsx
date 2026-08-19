@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Kanban from "./pages/kanban";
-import Sobre from "./pages/sobre";
-import Login from "./pages/login";
-import Sidebar from "./componentes/sidebar";
+import Kanban from "./Componentes/kanban";
+import Sobre from "./pages/Sobre";
+import Login from "./pages/Login";
+import Sidebar from "./Componentes/Sidebar";
 import RotaPrivada from "./Componentes/RotaPrivada";
 
 function App() {
