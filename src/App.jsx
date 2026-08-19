@@ -4,7 +4,7 @@ import Kanban from "./pages/kanban";
 import Sobre from "./pages/sobre";
 import Login from "./pages/login";
 import Sidebar from "./componentes/sidebar";
-import RotaPrivada from "./componentes/RotaPrivada";
+import RotaPrivada from "./Componentes/RotaPrivada";
 
 function App() {
   return (
