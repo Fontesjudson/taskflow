@@ -1,8 +1,8 @@
-import Header from "../componentes/Header";
-import ListaTarefas from "../componentes/ListaTarefas"; 
+import Header from "../Componentes/Header";
+import ListaTarefas from "../Componentes/ListaTarefas"; 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ModalTarefa from '../componentes/ModalTarefa';
+import ModalTarefa from '../Componentes/ModalTarefa';
 
 function Kanban() {
   const [tarefas, setTarefas] = useState(() => {
