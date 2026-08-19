@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import Kanban from "./Componentes/kanban";
+import Kanban from "./Componentes/Kanban";
 import Sobre from "./pages/Sobre";
 import Login from "./pages/Login";
 import Sidebar from "./Componentes/Sidebar";
