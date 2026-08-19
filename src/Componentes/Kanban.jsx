@@ -1,18 +1,18 @@
-//
-import Header from "./Header";
-import axios from "axios"; 
-import ListaTarefas from "./ListaTarefas";
+import Header from "../componentes/Header";
+import ListaTarefas from "../componentes/ListaTarefas"; 
 import { useState, useEffect } from "react";
+import axios from "axios";
+import ModalTarefa from '../componentes/ModalTarefa';
 
 function Kanban() {
   const [tarefas, setTarefas] = useState(() => {
     const tarefasSalvas = localStorage.getItem("tarefas");
     if (!tarefasSalvas) return [];
     try {
-    const tarefasConvertidas = JSON.parse(tarefasSalvas);
-    return Array.isArray(tarefasConvertidas) ? tarefasConvertidas : [];
+      const tarefasConvertidas = JSON.parse(tarefasSalvas);
+      return Array.isArray(tarefasConvertidas) ? tarefasConvertidas : [];
     } catch {
-      return []
+      return [];
     }
   });
 
@@ -24,9 +24,14 @@ function Kanban() {
     return Math.max(...lista.map((t) => t.id || 0)) + 1;
   });
 
+  // Estados que faltavam no formulário
   const [texto, setTexto] = useState("");
   const [prioridade, setPrioridade] = useState("media");
   const [cep, setCep] = useState("");
+
+  const [modalAberto, setModalAberto] = useState(false);
+  const [tarefaEditando, setTarefaEditando] = useState(null);
+  const [colunaAtiva, setColunaAtiva] = useState("afazer");
   const [filtroPrioridade, setFiltroPrioridade] = useState('todas');
 
   const tarefasFiltradas = tarefas.filter((t) => {
@@ -34,15 +39,19 @@ function Kanban() {
     return t.prioridade === filtroPrioridade;
   });
 
-  useEffect(() => {
-    const pendentes = tarefas.filter(
-      (t) => t.coluna === 'afazer').length;
+  function abrirModalEditar(tarefa) {
+    setTarefaEditando(tarefa);
+    setModalAberto(true);
+  }
 
-      if (pendentes > 0) {
-        document.title = `(${pendentes}) TaskFlow`;
-      } else {
-        document.title = 'TaskFlow';
-      }
+  useEffect(() => {
+    const pendentes = tarefas.filter((t) => t.coluna === 'afazer').length;
+
+    if (pendentes > 0) {
+      document.title = `(${pendentes}) TaskFlow`;
+    } else {
+      document.title = 'TaskFlow';
+    }
     
     localStorage.setItem("tarefas", JSON.stringify(tarefas));
   }, [tarefas]);
@@ -71,6 +80,7 @@ function Kanban() {
     };
 
     setTarefas([...tarefas, novaTarefa]);
+    setProximaId(proximaId + 1);
 
     if (cep) {
       BuscarEndereco(cep);
@@ -81,14 +91,15 @@ function Kanban() {
     setCep("");
   };
 
-  function salvarTarefas(dados) {
-    if (dados.id !== underfined) {
+  function salvarTarefa(dados) {
+    if (dados.id !== undefined) {
       setTarefas(
-        tarefas.map((t) => (t.id === dados.id ? { ...t, ...dados } : t)),
+        tarefas.map((t) => (t.id === dados.id ? { ...t, ...dados } : t))
       );
     } else {
-      setTarefas([...tarefas, {...dados, id: proximoId}]);
-      setProximoId(proximoId + 1);
+      setTarefas([...tarefas, { ...dados, id: proximaId }]);
+      setProximaId(proximaId + 1);
+    }
   }
 
   const deletarTarefa = (id) => {
@@ -98,7 +109,7 @@ function Kanban() {
 
     if (confirmado) {
       setTarefas(tarefas.filter((t) => t.id !== id));
-    };
+    }
   };
 
   const alternarConcluida = (id) => {
@@ -195,7 +206,7 @@ function Kanban() {
             <div className="kanban-coluna-header">
               <h3>Em Andamento</h3>
               <span className="kanban-contador">
-                {tarefas.filter((t) => t.coluna === "andamento").length}
+                {tarefasFiltradas.filter((t) => t.coluna === "andamento").length}
               </span>
             </div>
             <ListaTarefas
@@ -212,7 +223,7 @@ function Kanban() {
             <div className="kanban-coluna-header">
               <h3>Concluído</h3>
               <span className="kanban-contador">
-                {tarefas.filter((t) => t.coluna === "concluido").length}
+                {tarefasFiltradas.filter((t) => t.coluna === "concluido").length}
               </span>
             </div>
             <ListaTarefas
@@ -224,6 +235,14 @@ function Kanban() {
               colunaProxima={null}
             />
           </div>
+
+          <ModalTarefa
+            aberto={modalAberto}
+            onFechar={() => setModalAberto(false)}
+            onSalvar={salvarTarefa}
+            tarefa={tarefaEditando}
+            coluna={colunaAtiva}
+          />
         </div>
       </main>
 
@@ -235,6 +254,5 @@ function Kanban() {
     </>
   );
 }
-}
-export default Kanban;
 
+export default Kanban;

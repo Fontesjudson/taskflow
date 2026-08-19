@@ -6,10 +6,12 @@
             full stack. 
         </p>
         <h2>Tecnologias usadas:</h2>
-        <ul>React</ul>
-        <ul>Vite</ul>
-        <ul>Axios</ul>
-        <ul>React Router</ul>
+        <ul>
+        <li>React</li>
+        <li>Vite</li>
+        <li>Axios</li>
+        <li>React Router</li>
+        </ul>
         </main>
         
     );
