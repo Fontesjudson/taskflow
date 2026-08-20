@@ -5,8 +5,8 @@ import './Login.css'
 
 
  function Login () {
-   const {usuario, setUsuario} = useState('');
-   const {senha, setSenha} = useState('');
+   const [usuario, setUsuario] = useState('');
+   const [senha, setSenha] = useState('');
    const [erro, setErro] = useState('');
    const [shake, setShake] = useState(false);
    const { login } = useAuth();
