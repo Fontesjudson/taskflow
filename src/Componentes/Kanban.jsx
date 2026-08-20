@@ -5,7 +5,10 @@ import axios from "axios";
 import ModalTarefa from '../Componentes/ModalTarefa';
 
 function Kanban() {
-  const [tarefas, setTarefas] = useState(() => {
+ const URL_API = 'https://6a85aaef9c451dc67a63ec7f.mockapi.io/apiV1/tarefas'
+
+
+  /*const [tarefas, setTarefas] = useState(() => {
     const tarefasSalvas = localStorage.getItem("tarefas");
     if (!tarefasSalvas) return [];
     try {
@@ -14,20 +17,25 @@ function Kanban() {
     } catch {
       return [];
     }
-  });
+  });*/
 
-  const [proximaId, setProximaId] = useState(() => {
+  /*const [proximaId, setProximaId] = useState(() => {
     const tarefasSalvas = localStorage.getItem("tarefas");
     if (!tarefasSalvas) return 1;
     const lista = JSON.parse(tarefasSalvas);
     if (!Array.isArray(lista) || lista.length === 0) return 1;
     return Math.max(...lista.map((t) => t.id || 0)) + 1;
-  });
+  });*/
 
   // Estados que faltavam no formulário
-  const [texto, setTexto] = useState("");
+  /*const [texto, setTexto] = useState("");
   const [prioridade, setPrioridade] = useState("media");
-  const [cep, setCep] = useState("");
+  const [cep, setCep] = useState("");*/
+
+  const [tarefas, setTarefas] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+
 
   const [modalAberto, setModalAberto] = useState(false);
   const [tarefaEditando, setTarefaEditando] = useState(null);
@@ -45,7 +53,24 @@ function Kanban() {
   }
 
   useEffect(() => {
-    const pendentes = tarefas.filter((t) => t.coluna === 'afazer').length;
+   async function carregarTarefas(){
+    try{
+      setCarregando(true);
+      setErro('');
+
+      const resposta = await axios.get(URL_API + "/tarefas")
+
+      setTarefas(resposta.data);
+    } catch (e){
+      setErro('Erro ao carregar tarefas. Verifique a conexao.');
+    console.error(e);
+  } finally {
+    setCarregando(false);
+  }
+}
+carregarTarefas();
+  }, []); 
+    /*const pendentes = tarefas.filter((t) => t.coluna === 'afazer').length;
 
     if (pendentes > 0) {
       document.title = `(${pendentes}) TaskFlow`;
@@ -54,7 +79,7 @@ function Kanban() {
     }
     
     localStorage.setItem("tarefas", JSON.stringify(tarefas));
-  }, [tarefas]);
+  }, [tarefas]);*/
 
   const BuscarEndereco = async (cepParaBuscar) => {
     if (!cepParaBuscar) return;
@@ -86,22 +111,45 @@ function Kanban() {
       BuscarEndereco(cep);
     }
 
-    setTexto("");
-    setPrioridade("media");
-    setCep("");
   };
 
   function salvarTarefa(dados) {
-    if (dados.id !== undefined) {
+    try {
+      if (dados.id !== underfined) {
+        const { data: tarefaEditada } = await axios.put(URL_API + "/tarefas" + dados.id,
+          {
+            texto:      dados.texto,
+            prioridade: dados.prioridade,
+            cidade:     dados.cidade,
+            coluna:     dados.coluna,
+          
+      });
+      setTarefas(tarefasAtuais => tarefasAtuais.map(t => t.id === dados.id ? tarefaEditada : t));
+      else {
+        const { data: novaTarefa } = await axios.post(URL_API, {
+          texto:      dados.texto,
+          prioridade: dados.prioridade,
+          cidade:     dados.cidade,
+          coluna:     dados.coluna,   
+        }),
+        const { data: novaTarefa } = await axios.post(URL_API, dados);
+        setTarefas(tarefasAtuais => [...tarefasAtuais, novaTarefa]);
+      }
+    } catch (e) {
+      setErro('Erro ao salvar tarefa. Tente novamente.');
+      console.error(e);
+    }
+
+   /* if (dados.id !== undefined) {
       setTarefas(
         tarefas.map((t) => (t.id === dados.id ? { ...t, ...dados } : t))
       );
     } else {
       setTarefas([...tarefas, { ...dados, id: proximaId }]);
       setProximaId(proximaId + 1);
-    }
+    }*/
   }
-
+// corrigir 
   const deletarTarefa = (id) => {
     const confirmado = window.confirm(
       'Tem certeza que deseja deletar esta tarefa?'
@@ -119,7 +167,7 @@ function Kanban() {
       )
     );
   };
-
+// corrigir
   const moverTarefa = (id, novaColuna) => {
     setTarefas(
       tarefas.map((tarefa) =>
@@ -134,6 +182,12 @@ function Kanban() {
         titulo="TaskFlow "
         subtitulo="Gerencie suas tarefas"
         tarefas={tarefas}
+
+        {carregando &&(<p style={{ textAlign:'center', color:'#94A3B8'}}>Carregando tarefas...</p>)}
+        
+        {erro && (<p style={{ textAling:'center', color:'#EF4444'}}>{erro}</p>)}
+
+
       />
 
       <main className="container">
@@ -184,14 +238,15 @@ function Kanban() {
           </select>
         </div>
 
-        <div className="kanban-quadro">
+         {!carregando && !erro && (
+           <div className="kanban-quadro">
           <div className="kanban-coluna1">
             <div className="kanban-coluna-header">
               <h3>A Fazer</h3>
               <span className="kanban-contador">
                 {tarefasFiltradas.filter((t) => t.coluna === "afazer").length}
               </span>
-            </div>
+            </div>)}
             <ListaTarefas
               tarefas={tarefasFiltradas.filter((t) => t.coluna === "afazer")}
               onDeletar={deletarTarefa}
