@@ -150,16 +150,26 @@ carregarTarefas();
     }*/
   }
 // corrigir 
-  const deletarTarefa = (id) => {
-    const confirmado = window.confirm(
+  async function deletarTarefa (id)  {
+        const confirmado = window.confirm(
       'Tem certeza que deseja deletar esta tarefa?'
     );
+    if (!confirmado) return;
 
+    try {
+      await axios.delete(URL_API + '/tarefas' + id);
+
+      setTarefas(tarefasAtuais => tarefasAtuais.filter(t => t.id !== id));
+    } catch (e) {
+      setErro('Erro ao deletar tarefa. Tente novamente.');
+      console.error(e)
+    }
+/*
     if (confirmado) {
       setTarefas(tarefas.filter((t) => t.id !== id));
     }
-  };
-
+  };*/
+  }
   const alternarConcluida = (id) => {
     setTarefas(
       tarefas.map((tarefa) =>
@@ -168,14 +178,23 @@ carregarTarefas();
     );
   };
 // corrigir
-  const moverTarefa = (id, novaColuna) => {
-    setTarefas(
+  async function moverTarefa (id, novaColuna) {
+    try {
+      const { data: tarefaMovida } = await axios.patch(
+        URL_API + '/' + id,
+        { coluna: novaColuna }
+      );
+      setTarefas(tarefasAtuais => tarefasAtuais.map(t => t.id === id ? tarefaMovida: t));
+    } catch (e) {
+      setErro('Erro ao mover tarefa. Tente novamente');
+      console.error(e);
+    }
+    /*setTarefas(
       tarefas.map((tarefa) =>
         tarefa.id === id ? { ...tarefa, coluna: novaColuna } : tarefa
       )
-    );
-  };
-
+    );*/
+  }
   return (
     <>
       <Header
