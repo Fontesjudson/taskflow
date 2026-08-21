@@ -5,37 +5,15 @@ import axios from "axios";
 import ModalTarefa from '../Componentes/ModalTarefa';
 
 function Kanban() {
- const URL_API = 'https://6a85aaef9c451dc67a63ec7f.mockapi.io/apiV1/tarefas'
-
-
-  /*const [tarefas, setTarefas] = useState(() => {
-    const tarefasSalvas = localStorage.getItem("tarefas");
-    if (!tarefasSalvas) return [];
-    try {
-      const tarefasConvertidas = JSON.parse(tarefasSalvas);
-      return Array.isArray(tarefasConvertidas) ? tarefasConvertidas : [];
-    } catch {
-      return [];
-    }
-  });*/
-
-  /*const [proximaId, setProximaId] = useState(() => {
-    const tarefasSalvas = localStorage.getItem("tarefas");
-    if (!tarefasSalvas) return 1;
-    const lista = JSON.parse(tarefasSalvas);
-    if (!Array.isArray(lista) || lista.length === 0) return 1;
-    return Math.max(...lista.map((t) => t.id || 0)) + 1;
-  });*/
-
-  // Estados que faltavam no formulário
-  /*const [texto, setTexto] = useState("");
-  const [prioridade, setPrioridade] = useState("media");
-  const [cep, setCep] = useState("");*/
+  const URL_API = 'https://6a85aaef9c451dc67a63ec7f.mockapi.io/apiV1/tarefas';
 
   const [tarefas, setTarefas] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
 
+  const [texto, setTexto] = useState('');
+  const [cep, setCep] = useState('');
+  const [prioridade, setPrioridade] = useState('media');
 
   const [modalAberto, setModalAberto] = useState(false);
   const [tarefaEditando, setTarefaEditando] = useState(null);
@@ -53,161 +31,142 @@ function Kanban() {
   }
 
   useEffect(() => {
-   async function carregarTarefas(){
-    try{
-      setCarregando(true);
-      setErro('');
-
-      const resposta = await axios.get(URL_API + "/tarefas")
-
-      setTarefas(resposta.data);
-    } catch (e){
-      setErro('Erro ao carregar tarefas. Verifique a conexao.');
-    console.error(e);
-  } finally {
-    setCarregando(false);
-  }
-}
-carregarTarefas();
-  }, []); 
-    /*const pendentes = tarefas.filter((t) => t.coluna === 'afazer').length;
-
-    if (pendentes > 0) {
-      document.title = `(${pendentes}) TaskFlow`;
-    } else {
-      document.title = 'TaskFlow';
+    async function carregarTarefas() {
+      try {
+        setCarregando(true);
+        setErro('');
+        const resposta = await axios.get(URL_API);
+        setTarefas(resposta.data);
+      } catch (e) {
+        setErro('Erro ao carregar tarefas. Verifique a conexão.');
+        console.error(e);
+      } finally {
+        setCarregando(false);
+      }
     }
-    
-    localStorage.setItem("tarefas", JSON.stringify(tarefas));
-  }, [tarefas]);*/
+    carregarTarefas();
+  }, []); 
 
+  
   const BuscarEndereco = async (cepParaBuscar) => {
     if (!cepParaBuscar) return;
     try {
       const resposta = await axios.get(
         `https://viacep.com.br/ws/${cepParaBuscar}/json/`
       );
-      console.log("cep data", resposta.data);
+      console.log("CEP data:", resposta.data);
     } catch (error) {
-      console.error(error.message); 
+      console.error("Erro ao buscar CEP:", error.message); 
     }
   };
 
-  const adicionarTarefa = () => {
+  const adicionarTarefa = async () => {
     if (texto.trim() === "") return;
 
-    const novaTarefa = {
-      id: proximaId,
+    const novaTarefaDados = {
       texto: texto,
       concluida: false,
       prioridade: prioridade,
       coluna: "afazer",
     };
 
-    setTarefas([...tarefas, novaTarefa]);
-    setProximaId(proximaId + 1);
+    try {
+      const resposta = await axios.post(URL_API, novaTarefaDados);
+      setTarefas((tarefasAtuais) => [...tarefasAtuais, resposta.data]);
 
-    if (cep) {
-      BuscarEndereco(cep);
+      if (cep) {
+        BuscarEndereco(cep);
+      }
+
+      setTexto('');
+      setCep('');
+      setPrioridade('media');
+    } catch (e) {
+      setErro('Erro ao adicionar tarefa.');
+      console.error(e);
     }
-
   };
 
-  function salvarTarefa(dados) {
+  async function salvarTarefa(dados) {
     try {
-      if (dados.id !== underfined) {
-        const { data: tarefaEditada } = await axios.put(URL_API + "/tarefas" + dados.id,
-          {
-            texto:      dados.texto,
-            prioridade: dados.prioridade,
-            cidade:     dados.cidade,
-            coluna:     dados.coluna,
-          
-      });
-      setTarefas(tarefasAtuais => tarefasAtuais.map(t => t.id === dados.id ? tarefaEditada : t));
-      else {
-        const { data: novaTarefa } = await axios.post(URL_API, {
-          texto:      dados.texto,
+      if (dados.id !== undefined) {
+        const { data: tarefaEditada } = await axios.put(`${URL_API}/${dados.id}`, {
+          texto: dados.texto,
           prioridade: dados.prioridade,
-          cidade:     dados.cidade,
-          coluna:     dados.coluna,   
-        }),
+          cidade: dados.cidade,
+          coluna: dados.coluna,
+        });
+        setTarefas(tarefasAtuais =>
+          tarefasAtuais.map(t => (t.id === dados.id ? tarefaEditada : t))
+        );
+      } else {
         const { data: novaTarefa } = await axios.post(URL_API, dados);
         setTarefas(tarefasAtuais => [...tarefasAtuais, novaTarefa]);
       }
+      setModalAberto(false);
     } catch (e) {
       setErro('Erro ao salvar tarefa. Tente novamente.');
       console.error(e);
     }
-
-   /* if (dados.id !== undefined) {
-      setTarefas(
-        tarefas.map((t) => (t.id === dados.id ? { ...t, ...dados } : t))
-      );
-    } else {
-      setTarefas([...tarefas, { ...dados, id: proximaId }]);
-      setProximaId(proximaId + 1);
-    }*/
   }
-// corrigir 
-  async function deletarTarefa (id)  {
-        const confirmado = window.confirm(
-      'Tem certeza que deseja deletar esta tarefa?'
-    );
+ 
+  async function deletarTarefa(id) {
+    const confirmado = window.confirm('Tem certeza que deseja deletar esta tarefa?');
     if (!confirmado) return;
 
     try {
-      await axios.delete(URL_API + '/tarefas' + id);
-
+      await axios.delete(`${URL_API}/${id}`);
       setTarefas(tarefasAtuais => tarefasAtuais.filter(t => t.id !== id));
     } catch (e) {
       setErro('Erro ao deletar tarefa. Tente novamente.');
-      console.error(e)
+      console.error(e);
     }
-/*
-    if (confirmado) {
-      setTarefas(tarefas.filter((t) => t.id !== id));
-    }
-  };*/
   }
-  const alternarConcluida = (id) => {
-    setTarefas(
-      tarefas.map((tarefa) =>
-        tarefa.id === id ? { ...tarefa, concluida: !tarefa.concluida } : tarefa
-      )
-    );
+
+  const alternarConcluida = async (id) => {
+    const tarefaAlvo = tarefas.find(t => t.id === id);
+    if (!tarefaAlvo) return;
+
+    try {
+      const { data: tarefaAtualizada } = await axios.patch(`${URL_API}/${id}`, {
+        concluida: !tarefaAlvo.concluida
+      });
+      setTarefas(tarefas.map(t => (t.id === id ? tarefaAtualizada : t)));
+    } catch (e) {
+      console.error('Erro ao alterar estado de concluída:', e);
+    }
   };
-// corrigir
-  async function moverTarefa (id, novaColuna) {
+
+  async function moverTarefa(id, novaColuna) {
     try {
       const { data: tarefaMovida } = await axios.patch(
-        URL_API + '/' + id,
+        `${URL_API}/${id}`,
         { coluna: novaColuna }
       );
-      setTarefas(tarefasAtuais => tarefasAtuais.map(t => t.id === id ? tarefaMovida: t));
+      setTarefas(tarefasAtuais =>
+        tarefasAtuais.map(t => (t.id === id ? tarefaMovida : t))
+      );
     } catch (e) {
       setErro('Erro ao mover tarefa. Tente novamente');
       console.error(e);
     }
-    /*setTarefas(
-      tarefas.map((tarefa) =>
-        tarefa.id === id ? { ...tarefa, coluna: novaColuna } : tarefa
-      )
-    );*/
   }
+
   return (
     <>
       <Header
-        titulo="TaskFlow "
+        titulo="TaskFlow"
         subtitulo="Gerencie suas tarefas"
         tarefas={tarefas}
-
-        {carregando &&(<p style={{ textAlign:'center', color:'#94A3B8'}}>Carregando tarefas...</p>)}
-        
-        {erro && (<p style={{ textAling:'center', color:'#EF4444'}}>{erro}</p>)}
-
-
       />
+
+      {carregando && (
+        <p style={{ textAlign: 'center', color: '#94A3B8' }}>Carregando tarefas...</p>
+      )}
+      
+      {erro && (
+        <p style={{ textAlign: 'center', color: '#EF4444' }}>{erro}</p>
+      )}
 
       <main className="container">
         <section id="formulario">
@@ -244,80 +203,85 @@ carregarTarefas();
           </div>
         </section>
 
-        <div className='filtro-prioridade'>
-          <label>Filtrar por prioridade:</label>
+        <div className="filtro-prioridade">
+          <label>Filtrar por prioridade: </label>
           <select
             value={filtroPrioridade}
             onChange={(e) => setFiltroPrioridade(e.target.value)}
           >
-           <option value='todas'>Todas</option>
-           <option value='alta'>Alta</option>
-           <option value='media'>Media</option>
-           <option value='baixa'>Baixa</option>
+            <option value="todas">Todas</option>
+            <option value="alta">Alta</option>
+            <option value="media">Média</option>
+            <option value="baixa">Baixa</option>
           </select>
         </div>
 
-         {!carregando && !erro && (
-           <div className="kanban-quadro">
-          <div className="kanban-coluna1">
-            <div className="kanban-coluna-header">
-              <h3>A Fazer</h3>
-              <span className="kanban-contador">
-                {tarefasFiltradas.filter((t) => t.coluna === "afazer").length}
-              </span>
-            </div>)}
-            <ListaTarefas
-              tarefas={tarefasFiltradas.filter((t) => t.coluna === "afazer")}
-              onDeletar={deletarTarefa}
-              onConcluir={alternarConcluida}
-              onMover={moverTarefa}
-              colunaAnterior={null}
-              colunaProxima="andamento"
-            />
-          </div>
-
-          <div className="kanban-coluna2">
-            <div className="kanban-coluna-header">
-              <h3>Em Andamento</h3>
-              <span className="kanban-contador">
-                {tarefasFiltradas.filter((t) => t.coluna === "andamento").length}
-              </span>
+        {!carregando && !erro && (
+          <div className="kanban-quadro">
+            {/* Coluna A Fazer */}
+            <div className="kanban-coluna1">
+              <div className="kanban-coluna-header">
+                <h3>A Fazer</h3>
+                <span className="kanban-contador">
+                  {tarefasFiltradas.filter((t) => t.coluna === "afazer").length}
+                </span>
+              </div>
+              <ListaTarefas
+                tarefas={tarefasFiltradas.filter((t) => t.coluna === "afazer")}
+                onDeletar={deletarTarefa}
+                onConcluir={alternarConcluida}
+                onMover={moverTarefa}
+                onEditar={abrirModalEditar}
+                colunaAnterior={null}
+                colunaProxima="andamento"
+              />
             </div>
-            <ListaTarefas
-              tarefas={tarefasFiltradas.filter((t) => t.coluna === "andamento")}
-              onDeletar={deletarTarefa}
-              onConcluir={alternarConcluida}
-              onMover={moverTarefa}
-              colunaAnterior="afazer"
-              colunaProxima="concluido"
-            />
-          </div>
 
-          <div className="kanban-coluna3">
-            <div className="kanban-coluna-header">
-              <h3>Concluído</h3>
-              <span className="kanban-contador">
-                {tarefasFiltradas.filter((t) => t.coluna === "concluido").length}
-              </span>
+            <div className="kanban-coluna2">
+              <div className="kanban-coluna-header">
+                <h3>Em Andamento</h3>
+                <span className="kanban-contador">
+                  {tarefasFiltradas.filter((t) => t.coluna === "andamento").length}
+                </span>
+              </div>
+              <ListaTarefas
+                tarefas={tarefasFiltradas.filter((t) => t.coluna === "andamento")}
+                onDeletar={deletarTarefa}
+                onConcluir={alternarConcluida}
+                onMover={moverTarefa}
+                onEditar={abrirModalEditar}
+                colunaAnterior="afazer"
+                colunaProxima="concluido"
+              />
             </div>
-            <ListaTarefas
-              tarefas={tarefasFiltradas.filter((t) => t.coluna === "concluido")}
-              onDeletar={deletarTarefa}
-              onConcluir={alternarConcluida}
-              onMover={moverTarefa}
-              colunaAnterior="andamento"
-              colunaProxima={null}
+
+            <div className="kanban-coluna3">
+              <div className="kanban-coluna-header">
+                <h3>Concluído</h3>
+                <span className="kanban-contador">
+                  {tarefasFiltradas.filter((t) => t.coluna === "concluido").length}
+                </span>
+              </div>
+              <ListaTarefas
+                tarefas={tarefasFiltradas.filter((t) => t.coluna === "concluido")}
+                onDeletar={deletarTarefa}
+                onConcluir={alternarConcluida}
+                onMover={moverTarefa}
+                onEditar={abrirModalEditar}
+                colunaAnterior="andamento"
+                colunaProxima={null}
+              />
+            </div>
+
+            <ModalTarefa
+              aberto={modalAberto}
+              onFechar={() => setModalAberto(false)}
+              onSalvar={salvarTarefa}
+              tarefa={tarefaEditando}
+              coluna={colunaAtiva}
             />
           </div>
-
-          <ModalTarefa
-            aberto={modalAberto}
-            onFechar={() => setModalAberto(false)}
-            onSalvar={salvarTarefa}
-            tarefa={tarefaEditando}
-            coluna={colunaAtiva}
-          />
-        </div>
+        )}
       </main>
 
       <footer>
