@@ -25,6 +25,7 @@ flex-direction: column;
 
 /* 3 - Container */
 .container {
+    flex-direction: column;
     display: flex;
     gap: 16px;
     max-width: 680px;
@@ -73,6 +74,9 @@ flex-direction: column;
 
 /* 5 - main */
 .main {
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
     flex: 1;
     padding: 28px 0;
 }
@@ -163,7 +167,7 @@ flex-direction: column;
 .Kanban-quadro{
     display: flex;
     gap: 16px;
-    align-items: flex-start;
+    align-items: stretch;
     margin-top: 24px;
     padding-bottom: 32px;
     overflow-x: auto;
