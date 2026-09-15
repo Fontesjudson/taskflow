@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { useAuth } from "./Contexts/AuthContext";
 import "./App.css";
 import Kanban from "./Componentes/Kanban";
 import Sobre from "./pages/Sobre";
@@ -7,6 +8,12 @@ import Sidebar from "./Componentes/Sidebar";
 import RotaPrivada from "./Componentes/RotaPrivada";
 
 function App() {
+
+  const { token } = useAuth();
+  {token && <Sidebar/>}
+  /*marginLeft: token ? '220px' : '0'*/
+
+  console.log(useAuth())
   return (
     <div className="app-layout">
       <Sidebar />

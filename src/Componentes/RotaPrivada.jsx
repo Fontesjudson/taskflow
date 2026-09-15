@@ -2,8 +2,8 @@ import { Navigate } from 'react-router';
 import { useAuth } from '../Contexts/AuthContext';
  
 function RotaPrivada({ children }) {
-    const { logado} = useAuth ();
-    if (!logado) {
+    const { token} = useAuth ();
+    if (!token) {
         return <Navigate to='/login' replace />
     }
     return children;
