@@ -10,14 +10,13 @@ import RotaPrivada from "./Componentes/RotaPrivada";
 function App() {
 
   const { token } = useAuth();
-  {token && <Sidebar/>}
-  /*marginLeft: token ? '220px' : '0'*/
 
-  console.log(useAuth())
+  console.log(useAuth)
   return (
     <div className="app-layout">
-      <Sidebar />
-
+      {token && <Sidebar />}
+      marginLeft: token ? '220px' : '0'
+       
       <main className="app-conteudo">
         <Routes>
           <Route 

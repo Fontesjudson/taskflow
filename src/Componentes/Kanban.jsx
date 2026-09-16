@@ -1,11 +1,12 @@
+import api from '../api';
 import Header from "../Componentes/Header";
 import ListaTarefas from "../Componentes/ListaTarefas"; 
 import { useState, useEffect } from "react";
-import axios from "axios";
+/*import axios from "axios";*/
 import ModalTarefa from '../Componentes/ModalTarefa';
 
 function Kanban() {
-  const URL_API = 'https://6a85aaef9c451dc67a63ec7f.mockapi.io/apiV1/tarefas';
+  /*const URL_API = 'https://6a85aaef9c451dc67a63ec7f.mockapi.io/apiV1/tarefas';*/
 
   const [tarefas, setTarefas] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -35,7 +36,7 @@ function Kanban() {
       try {
         setCarregando(true);
         setErro('');
-        const resposta = await axios.get(URL_API);
+        const resposta = await api.get ('/tarefas');
         setTarefas(resposta.data);
       } catch (e) {
         setErro('Erro ao carregar tarefas. Verifique a conexão.');
@@ -51,7 +52,7 @@ function Kanban() {
   const BuscarEndereco = async (cepParaBuscar) => {
     if (!cepParaBuscar) return;
     try {
-      const resposta = await axios.get(
+      const resposta = await api.get(
         `https://viacep.com.br/ws/${cepParaBuscar}/json/`
       );
       console.log("CEP data:", resposta.data);
@@ -71,7 +72,7 @@ function Kanban() {
     };
 
     try {
-      const resposta = await axios.post(URL_API, novaTarefaDados);
+      const resposta = await api.post( novaTarefaDados);
       setTarefas((tarefasAtuais) => [...tarefasAtuais, resposta.data]);
 
       if (cep) {
@@ -90,7 +91,7 @@ function Kanban() {
   async function salvarTarefa(dados) {
     try {
       if (dados.id !== undefined) {
-        const { data: tarefaEditada } = await axios.put(`${URL_API}/${dados.id}`, {
+        const { data: tarefaEditada } = await api.put(`${api}/${dados.id}`, {
           texto: dados.texto,
           prioridade: dados.prioridade,
           cidade: dados.cidade,
@@ -100,7 +101,7 @@ function Kanban() {
           tarefasAtuais.map(t => (t.id === dados.id ? tarefaEditada : t))
         );
       } else {
-        const { data: novaTarefa } = await axios.post(URL_API, dados);
+        const { data: novaTarefa } = await api.post(api, dados);
         setTarefas(tarefasAtuais => [...tarefasAtuais, novaTarefa]);
       }
       setModalAberto(false);
@@ -115,7 +116,7 @@ function Kanban() {
     if (!confirmado) return;
 
     try {
-      await axios.delete(`${URL_API}/${id}`);
+      await api.delete(`${api}/${id}`);
       setTarefas(tarefasAtuais => tarefasAtuais.filter(t => t.id !== id));
     } catch (e) {
       setErro('Erro ao deletar tarefa. Tente novamente.');
@@ -128,7 +129,7 @@ function Kanban() {
     if (!tarefaAlvo) return;
 
     try {
-      const { data: tarefaAtualizada } = await axios.patch(`${URL_API}/${id}`, {
+      const { data: tarefaAtualizada } = await api.patch(`${api}/${id}`, {
         concluida: !tarefaAlvo.concluida
       });
       setTarefas(tarefas.map(t => (t.id === id ? tarefaAtualizada : t)));
@@ -139,8 +140,8 @@ function Kanban() {
 
   async function moverTarefa(id, novaColuna) {
     try {
-      const { data: tarefaMovida } = await axios.patch(
-        `${URL_API}/${id}`,
+      const { data: tarefaMovida } = await api.patch(
+        `${api}/${id}`,
         { coluna: novaColuna }
       );
       setTarefas(tarefasAtuais =>

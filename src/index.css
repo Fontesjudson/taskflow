@@ -167,7 +167,7 @@ flex-direction: column;
 .Kanban-quadro{
     display: flex;
     gap: 16px;
-    align-items: stretch;
+    align-items: flex-start;
     margin-top: 24px;
     padding-bottom: 32px;
     overflow-x: auto;
