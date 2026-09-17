@@ -7,7 +7,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => {
     return localStorage.getItem("token") === "true";
   });
-  const [usuario, setUsuario] = useState  
+  const [usuario, setUsuario] = useState (null);
 
   function login(dadosUsuario, tokenRecebido) {
     setUsuario(dadosUsuario)

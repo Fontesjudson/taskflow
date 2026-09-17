@@ -89,9 +89,12 @@ function Kanban() {
   };
 
   async function salvarTarefa(dados) {
-    try {
-      if (dados.id !== undefined) {
-        const { data: tarefaEditada } = await api.put(`${api}/${dados.id}`, {
+    if (dados.id === undefined) {
+      try {
+        const resposta = await api.post('/tarefas', dados);
+        setTarefas([...tarefas, resposta.data]);
+      
+       /* const { data: tarefaEditada } = await api.put(`${api}/${dados.id}`, {
           texto: dados.texto,
           prioridade: dados.prioridade,
           cidade: dados.cidade,
@@ -104,10 +107,20 @@ function Kanban() {
         const { data: novaTarefa } = await api.post(api, dados);
         setTarefas(tarefasAtuais => [...tarefasAtuais, novaTarefa]);
       }
-      setModalAberto(false);
-    } catch (e) {
+      setModalAberto(false);*/
+    } catch (err) {
       setErro('Erro ao salvar tarefa. Tente novamente.');
       console.error(e);
+    }
+  } else {
+    try {
+      const resposta = await api.put(
+        '/tarefas/${dados.id}',
+        dados
+      );
+      setTarefas(tarefas.map(t => t.id === dados.id ? resposta.data : t));
+    } catch (err) {
+      setErro('Erro ao editar tarefa. Tente novamente.');
     }
   }
  
@@ -116,11 +129,10 @@ function Kanban() {
     if (!confirmado) return;
 
     try {
-      await api.delete(`${api}/${id}`);
-      setTarefas(tarefasAtuais => tarefasAtuais.filter(t => t.id !== id));
-    } catch (e) {
-      setErro('Erro ao deletar tarefa. Tente novamente.');
-      console.error(e);
+      await api.delete(`/tarefas/${id}`);
+      setTarefas(tarefas.filter(t => t.id !== id));
+    } catch (err) {
+      setErro('Erro ao deletar tarefa.');
     }
   }
 
@@ -139,14 +151,16 @@ function Kanban() {
   };
 
   async function moverTarefa(id, novaColuna) {
+    const resposta = await api.put('/tarefas/${id}', { coluna: novaColuna});
     try {
-      const { data: tarefaMovida } = await api.patch(
+      /*const { data: tarefaMovida } = await api.patch(
         `${api}/${id}`,
         { coluna: novaColuna }
-      );
-      setTarefas(tarefasAtuais =>
+      );*/
+      setTarefas(tarefas.map(t => t.id === id ? resposta.data : t));
+     /* setTarefas(tarefasAtuais =>
         tarefasAtuais.map(t => (t.id === id ? tarefaMovida : t))
-      );
+      );*/
     } catch (e) {
       setErro('Erro ao mover tarefa. Tente novamente');
       console.error(e);

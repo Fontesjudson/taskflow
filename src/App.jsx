@@ -11,11 +11,10 @@ function App() {
 
   const { token } = useAuth();
 
-  console.log(useAuth)
   return (
     <div className="app-layout">
       {token && <Sidebar />}
-      marginLeft: token ? '220px' : '0'
+      {/*marginLeft: token ? '220px' : '0'*/}
        
       <main className="app-conteudo">
         <Routes>
