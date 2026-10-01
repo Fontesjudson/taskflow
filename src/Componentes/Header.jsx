@@ -2,9 +2,9 @@ import styles from './Header.module.css';
 
 function Header({ titulo, subtitulo= "Informe o subtítulo", tarefas = [] }) {
 
-const Total = tarefas.length;
-const Pendentes = tarefas.filter(tarefa => !tarefa.concluida).length;
-const Concluidas = tarefas.filter(tarefa => tarefa.concluida).length;
+const total = tarefas.length;
+const pendentes = tarefas.filter(tarefa => !tarefa.concluida).length;
+const concluidas = tarefas.filter(tarefa => tarefa.concluida).length;
 
 return (
 <header className={styles.header}>
@@ -15,11 +15,11 @@ return (
   </div>
 
   <div id="contadores">
-    <span id="cont-total">{`${Total} tarefas`}</span>
+    <span id="cont-total">{`${total} tarefas`}</span>
     <span className='separador'>·</span>
-    <span id="cont-pendentes">{`${Pendentes} pendentes`}</span>
+    <span id="cont-pendentes">{`${pendentes} pendentes`}</span>
     <span className='separador'>·</span>
-    <span id="cont-concluidas">{`${Concluidas} concluídas`}</span>
+    <span id="cont-concluidas">{`${concluidas} concluídas`}</span>
   </div>
   </div>
 </header>
