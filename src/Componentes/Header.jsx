@@ -1,6 +1,6 @@
 import styles from './Header.module.css';
 
-function Header ({ titulo, subtitulo = "Informe o subtítulo" }) {
+const Header = ({ titulo, subtitulo = "Informe o subtítulo" }) => {
 
 {/*const total = tarefas.length;
 const pendentes = tarefas.filter(tarefa => !tarefa.concluida).length;
