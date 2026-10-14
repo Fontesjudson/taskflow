@@ -1,7 +1,7 @@
 import api from "../api";
-import Header from "../componentes/Header.jsx";
-import ListaTarefas from "../componentes/ListaTarefas.jsx";
-import ModalTarefa from "../componentes/ModalTarefa.jsx";
+import Header from "./Header";
+import ListaTarefas from "./ListaTarefas";
+import ModalTarefa from "./ModalTarefa";
 
 import { useState, useEffect } from "react";
 
