@@ -20,6 +20,9 @@ function Kanban() {
         setCarregando(true);
         setErro("");
         const resposta = await api.get("/tarefas");
+
+        console.log(resposta.data);
+
         setTarefas(resposta.data);
       } catch (e) {
         setErro("Erro ao carregar tarefas. Verifique a conexão.");
