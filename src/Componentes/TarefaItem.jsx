@@ -6,7 +6,6 @@ function TarefaItem({
    onEditar,
    cidade = "",
    onDeletar,
-  
 
    onMover = null,
    colunaAnterior = null,
@@ -31,7 +30,8 @@ function TarefaItem({
        <button 
        className={styles.btnMover}
        onClick={() => onMover(colunaAnterior)}
-       title='Mover para a coluna anterior'> ←
+       title='Mover para a coluna anterior'> 
+        ←
        </button>
        )}
 
@@ -39,7 +39,8 @@ function TarefaItem({
         <button
           className={styles.btnMover}
           onClick={() => onMover(colunaProxima)}
-          title="Mover para próxima coluna">→
+          title="Mover para próxima coluna">
+           →
         </button>
         )}
 
@@ -47,8 +48,6 @@ function TarefaItem({
           X
         </button>
         </div>
-
-
      </li>
    );
 }

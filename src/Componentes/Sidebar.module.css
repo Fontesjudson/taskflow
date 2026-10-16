@@ -1,9 +1,9 @@
 .sidebar {
-width: 220px; /* largura fixa da sidebar */
-min-height: 100vh; /* ocupa toda a altura da tela */
+width: 220px; 
+min-height: 100vh; 
 background-color: #0D1B2A;
 padding: 24px 16px;
-position: fixed; /* fica fixa enquanto o conteúdo rola */
+position: fixed;
 top: 0; left: 0;
 display: flex;
 flex-direction: column;
