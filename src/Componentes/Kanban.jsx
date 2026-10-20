@@ -1,4 +1,4 @@
-import api from "../api";
+import api, { mensagemDeErro } from "../api";
 import Header from "./Header";
 import ListaTarefas from "./ListaTarefas";
 import ModalTarefa from "./ModalTarefa";
@@ -13,17 +13,28 @@ function Kanban() {
   const [modalAberto, setModalAberto] = useState(false);
   const [tarefaEditando, setTarefaEditando] = useState(null);
   const [colunaAtiva, setColunaAtiva] = useState("afazer");
+  const [listaPrioridades, setListaPrioridades] = useState({});
+  const [listaUsuarios, setListaUsuarios] = useState({});
+  const [listaProjetos, setListaProjetos] = useState({});
 
   useEffect(() => {
     async function carregarTarefas() {
       try {
         setCarregando(true);
         setErro("");
-        const resposta = await api.get("/tarefas");
+       // const resposta = await api.get("/tarefas");
+        const [respPrioridades, respTarefas, respUsuarios, respProjetos] =
+        await Promise.all([
+          api.get("/prioridades"),
+          api.get("/tarefas"),
+          api.get("/usuarios"),
+          api.get("/projetos"),
+        ])
 
-        console.log(resposta.data);
-
-        setTarefas(resposta.data);
+        setListaPrioridades(respPrioridades.data);
+        setTarefas(respTarefas.data);
+        setListaUsuarios(respUsuarios.data);
+        setListaProjetos(respProjetos.data);
       } catch (e) {
         setErro("Erro ao carregar tarefas. Verifique a conexão.");
         console.error(e);
@@ -41,10 +52,11 @@ function Kanban() {
 
   async function salvarTarefa(dados) {
     
-    if (dados.id === undefined) {
+    if (dados.id) {
       try {
         const resposta = await api.post("/tarefas", dados);
-        setTarefas([...tarefas, resposta.data]);
+        setTarefas(tarefas.map((t) => (t.id === dados.id ? resposta.data : t)));
+        //setTarefas([...tarefas, resposta.data]);
       } catch (err) {
         setErro("Erro ao criar tarefa. Tente novamente.");
         console.error(err);
@@ -52,7 +64,8 @@ function Kanban() {
     } else {
       try {
         const resposta = await api.put(`/tarefas/${dados.id}`, dados);
-        setTarefas(tarefas.map((t) => (t.id === dados.id ? resposta.data : t)));
+        setTarefas([...tarefas, resposta.data]);
+        //setTarefas(tarefas.map((t) => (t.id === dados.id ? resposta.data : t)));
       } catch (err) {
         setErro("Erro ao salvar tarefa.");
         console.error(err);
@@ -63,19 +76,21 @@ function Kanban() {
   async function moverTarefa(id, novaColuna) {
     try {
       const tarefa = tarefas.find((t) => t.id === id);
-      const resposta = await api.put(`/tarefas/${id}`, {
-        texto: tarefa.texto,
+      const resposta = await api.put(`/tarefas/${id}`,
+         {...tarefa, coluna: novaColuna });
+       /* texto: tarefa.texto,
         prioridade: tarefa.prioridade,
         concluida: tarefa.concluida,
-        coluna: novaColuna,
-      });
+        coluna: novaColuna,*/
+      
       const tarefaMovida = resposta.data;
 
       setTarefas((tarefasAtuais) =>
         tarefasAtuais.map((t) => (t.id === id ? tarefaMovida : t)),
       );
     } catch (e) {
-      setErro("Erro ao mover tarefa.");
+     // setErro("Erro ao mover tarefa.");
+     alert(mensagensDeErro(e).join("\n"));
       console.error(e);
     }
   }
@@ -90,7 +105,8 @@ function Kanban() {
       await api.delete(`/tarefas/${id}`);
       setTarefas((tarefasAtuais) => tarefasAtuais.filter((t) => t.id !== id));
     } catch (e) {
-      setErro("Erro ao deletar tarefa.");
+     // setErro("Erro ao deletar tarefa.");
+     alert(mensagensDeErro(e).join("\n"));
       console.error(e);
     }
   }
@@ -235,6 +251,7 @@ function Kanban() {
               </div>
               <ListaTarefas
                 tarefas={tarefasPorColuna("andamento")}
+                prioridades={listaPrioridades}
                 onDeletar={deletarTarefa}
                 onMover={moverTarefa}
                 colunaAnterior="afazer"
@@ -284,6 +301,9 @@ function Kanban() {
           coluna={colunaAtiva}
           onSalvar={salvarTarefa}
           onFechar={() => setModalAberto(false)}
+          prioridades={listaPrioridades}
+          usuarios={listaUsuarios}
+          projetos={listaProjetos}
         />
       )}
     </div>
