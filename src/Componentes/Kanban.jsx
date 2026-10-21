@@ -1,4 +1,4 @@
-import api, { mensagemDeErro } from "../api";
+import api, { mensagensDeErro } from "../api";
 import Header from "./Header";
 import ListaTarefas from "./ListaTarefas";
 import ModalTarefa from "./ModalTarefa";
@@ -22,7 +22,6 @@ function Kanban() {
       try {
         setCarregando(true);
         setErro("");
-       // const resposta = await api.get("/tarefas");
         const [respPrioridades, respTarefas, respUsuarios, respProjetos] =
         await Promise.all([
           api.get("/prioridades"),

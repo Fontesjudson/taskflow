@@ -3,8 +3,9 @@ import styles from './TarefaItem.module.css';
 function TarefaItem({
    texto,  
    prioridade = 'media',
+   rotuloPrioridade = "",
    onEditar,
-   cidade = "",
+   //cidade = "",
    onDeletar,
 
    onMover = null,
@@ -22,9 +23,9 @@ function TarefaItem({
      <li className={classeItem}>
       <div className={styles.conteudo}>
        <span className={classeTexto} onDoubleClick={onEditar}>{texto}</span>
-       {cidade && <span className={styles.cidade}>{cidade}</span>}
+       {/*cidade && <span className={styles.cidade}>{cidade}</span>*/}
        </div>
-       <span className={classePrioridade}>{prioridade}</span>
+       <span className={classePrioridade}>{rotuloPrioridade || prioridade}</span>
        <div className = {styles.acoes}>
         {modoKanban && colunaAnterior && (
        <button 
