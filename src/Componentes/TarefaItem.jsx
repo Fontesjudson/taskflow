@@ -5,7 +5,6 @@ function TarefaItem({
    prioridade = 'media',
    rotuloPrioridade = "",
    onEditar,
-   //cidade = "",
    onDeletar,
 
    onMover = null,
@@ -23,7 +22,6 @@ function TarefaItem({
      <li className={classeItem}>
       <div className={styles.conteudo}>
        <span className={classeTexto} onDoubleClick={onEditar}>{texto}</span>
-       {/*cidade && <span className={styles.cidade}>{cidade}</span>*/}
        </div>
        <span className={classePrioridade}>{rotuloPrioridade || prioridade}</span>
        <div className = {styles.acoes}>
@@ -45,7 +43,7 @@ function TarefaItem({
         </button>
         )}
 
-        <button className={styles.btnDeletar} onClick={onDeletar}>
+        <button className={styles.btnDeletar} onClick={onDeletar} title='excluir tarefa'>
           X
         </button>
         </div>

@@ -44,10 +44,10 @@ function Kanban() {
     carregarTarefas();
   }, []);
 
-  useEffect(() => {
-    const pendentes = tarefas.filter((t) => t.coluna !== "concluido").length;
-    document.title = pendentes > 0 ? `(${pendentes}) TaskFlow` : "TaskFlow";
-  }, [tarefas]);
+ // useEffect(() => {
+ //   const pendentes = tarefas.filter((t) => t.coluna !== "concluido").length;
+ //   document.title = pendentes > 0 ? `(${pendentes}) TaskFlow` : "TaskFlow";
+//  }, [tarefas]);
 
   async function salvarTarefa(dados) {
     
@@ -201,7 +201,7 @@ function Kanban() {
                 <h2>A Fazer</h2>
                 <div className="kanban-coluna-header-acoes">
                   <span className="kanban-contador">
-                    {tarefasPorColuna("afazer").length}
+                    {tarefas.filter((t) => t.coluna === "afazer").length}
                   </span>
                   <button
                     className="kanban-btn-add"
@@ -218,7 +218,7 @@ function Kanban() {
                 </div>
               </div>
               <ListaTarefas
-                tarefas={tarefasPorColuna("afazer")}
+                tarefas={tarefas.filter((t) => t.coluna === "afazer")}
                 onDeletar={deletarTarefa}
                 onMover={moverTarefa}
                 colunaAnterior={null}
@@ -249,7 +249,7 @@ function Kanban() {
                 </div>
               </div>
               <ListaTarefas
-                tarefas={tarefasPorColuna("andamento")}
+                tarefas={tarefas.filter((t) => t.coluna === "andamento")}
                 prioridades={listaPrioridades}
                 onDeletar={deletarTarefa}
                 onMover={moverTarefa}
@@ -281,7 +281,7 @@ function Kanban() {
                 </div>
               </div>
               <ListaTarefas
-                tarefas={tarefasPorColuna("concluido")}
+                tarefas={tarefas.filter((t) => t.coluna === "concluido")}
                 onDeletar={deletarTarefa}
                 onMover={moverTarefa}
                 colunaAnterior="andamento"
