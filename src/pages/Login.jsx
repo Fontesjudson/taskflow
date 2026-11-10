@@ -18,13 +18,14 @@ import './Login.css'
         try {
             const resposta = await api.post('/auth/login', {
                 email,
-                senha,
+                senha
             });
             const { token, usuario } = resposta.data;
             login(usuario, token);
             navigate('/');
         } catch (err){
-        setErro(mensagensDeErro(err).join(""));
+            console.log("Erro ao fazer login:", err.response?.data);
+        setErro(mensagensDeErro(err).join(" "));
         }
         setShake(true);
         setTimeout(() => setShake(false), 500);
