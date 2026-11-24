@@ -18,9 +18,9 @@ describe('ListaTarefas', () => {
     test('lista vazia mostra a mensagem e nenhuma lista', () => {
     render(<ListaTarefas tarefas={[]} onDeletar={vi.fn()} />) 
 
-    const mensagem = screen.getByText('Nenhuma tarefa aqui ainda,');
+    const mensagem = screen.getByText('Nenhuma tarefa aqui ainda');
     
-    expect(mensagem).toBeInTheDocument()
+    expect(mensagem).toBeInTheDocument();
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
     })
 
